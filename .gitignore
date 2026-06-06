@@ -1,0 +1,43 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+apps/vega/build/
+apps/google-tv/android/app/build/
+apps/google-tv/android/.gradle/
+apps/tizen/dist/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Metro
+.metro-health-check*
+
+# Yarn
+.yarn/cache
+.yarn/unplugged
+.pnp.*
+
+# Lock files (keep yarn.lock, ignore others)
+package-lock.json
+
+# Tizen
+*.wgt
+
+# Logs
+*.log
+
+# Local config
+.claude/
+
+# Videos
+*.mov
+*.mp4
+*.webm

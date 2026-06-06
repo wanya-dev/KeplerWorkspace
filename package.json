@@ -1,0 +1,41 @@
+{
+  "name": "kepler-workspace",
+  "private": true,
+  "workspaces": {
+    "packages": [
+      "packages/*",
+      "apps/*"
+    ],
+    "nohoist": [
+      "**/react",
+      "**/react-dom",
+      "**/react-native",
+      "**/react-native/**"
+    ]
+  },
+  "scripts": {
+    "clean": "yarn workspaces run clean ; rm -rf node_modules",
+
+    "vega:start": "yarn workspace @amazon-devices/keplerproject run start",
+    "vega:build": "yarn workspace @amazon-devices/keplerproject run build:release",
+    "vega:build:debug": "yarn workspace @amazon-devices/keplerproject run build:debug",
+    "vega:vvd:intel": "yarn workspace @amazon-devices/keplerproject run vvd:intel",
+    "vega:vvd:mseries": "yarn workspace @amazon-devices/keplerproject run vvd:mseries",
+    "vega:firetv": "yarn workspace @amazon-devices/keplerproject run firetv",
+    "vega:run": "yarn vega:build && yarn vega:vvd:intel",
+
+    "android:start": "yarn workspace @workspace/google-tv run start",
+    "android:deploy": "yarn workspace @workspace/google-tv run deploy",
+    "android:deploy:clean": "yarn workspace @workspace/google-tv run deploy:clean",
+    "android:run": "yarn android:deploy:clean",
+
+    "tizen:dev": "yarn workspace @workspace/tizen run dev",
+    "tizen:build": "yarn workspace @workspace/tizen run build",
+    "tizen:package": "yarn workspace @workspace/tizen run package",
+
+    "sim:start": "vega virtual-device start",
+    "sim:stop": "vega virtual-device stop",
+    "sim:status": "vega virtual-device status",
+    "stop": "lsof -ti :8081 | xargs kill -9 2>/dev/null; echo 'Metro server stopped'"
+  }
+}

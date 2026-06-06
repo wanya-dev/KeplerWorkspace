@@ -1,0 +1,27 @@
+{
+  "name": "@workspace/google-tv",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "react-native start",
+    "android": "react-native run-android",
+    "build:debug": "react-native run-android --variant=debug --no-packager",
+    "build:release": "cd android && ./gradlew assembleRelease",
+    "deploy": "cd android && ./gradlew installRelease && DEVICE=$(adb devices | grep -v emulator | grep -w device | head -1 | awk '{print $1}') && adb -s $DEVICE shell am start -n com.keplerandroidtv/.MainActivity",
+    "deploy:clean": "rm -rf android/app/build && cd android && ./gradlew installRelease && DEVICE=$(adb devices | grep -v emulator | grep -w device | head -1 | awk '{print $1}') && adb -s $DEVICE shell am start -n com.keplerandroidtv/.MainActivity",
+    "clean": "rm -rf node_modules build android/app/build"
+  },
+  "dependencies": {
+    "@workspace/shared": "*",
+    "react": "18.2.0",
+    "react-native": "npm:react-native-tvos@0.72.6-1"
+  },
+  "devDependencies": {
+    "@react-native/metro-config": "^0.72.6",
+    "@tsconfig/react-native": "^3.0.2",
+    "@types/react": "^18.0.24",
+    "metro-react-native-babel-preset": "^0.76.5",
+    "react-native-monorepo-tools": "^1.2.1",
+    "typescript": "4.8.4"
+  }
+}
