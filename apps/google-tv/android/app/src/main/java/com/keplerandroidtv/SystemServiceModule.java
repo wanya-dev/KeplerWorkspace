@@ -2,6 +2,7 @@ package com.keplerandroidtv;
 
 import android.content.Context;
 import android.media.AudioManager;
+import android.app.Activity;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -61,7 +62,11 @@ public class SystemServiceModule extends ReactContextBaseJavaModule {
 
     @ReactMethod
     public void showToast(String message) {
-        getCurrentActivity().runOnUiThread(() -> {
+        Activity activity = getCurrentActivity();
+        if (activity == null) {
+            return;
+        }
+        activity.runOnUiThread(() -> {
             Toast.makeText(getReactApplicationContext(), message, Toast.LENGTH_SHORT).show();
         });
     }

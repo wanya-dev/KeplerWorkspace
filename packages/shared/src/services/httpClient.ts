@@ -12,7 +12,7 @@ export interface HttpResponse<T = unknown> {
 }
 
 /**
- * HTTP client wrapper using fetch (React Native compatible)
+ * Small fetch wrapper shared by RN and Web runtimes.
  */
 export class HttpClient {
   private baseUrl: string;
@@ -46,7 +46,12 @@ export class HttpClient {
       url += `?${params.toString()}`;
     }
 
-    const fetchOptions: RequestInit = {method};
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), this.timeout);
+    const fetchOptions: RequestInit = {
+      method,
+      signal: controller.signal,
+    };
 
     if (options?.body) {
       fetchOptions.headers = {
@@ -58,15 +63,19 @@ export class HttpClient {
       fetchOptions.headers = this.defaultHeaders;
     }
 
-    const response = await fetch(url, fetchOptions);
-    const data = await response.json().catch(() => null);
+    try {
+      const response = await fetch(url, fetchOptions);
+      const data = await response.json().catch(() => null);
 
-    return {
-      data: data as T,
-      status: response.status,
-      headers: {},
-      ok: response.ok,
-    };
+      return {
+        data: data as T,
+        status: response.status,
+        headers: {},
+        ok: response.ok,
+      };
+    } finally {
+      clearTimeout(timeoutId);
+    }
   }
 
   async get<T = unknown>(

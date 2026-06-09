@@ -1,6 +1,11 @@
 # 部署指南（Build & Deploy）
 
-三端的构建/部署方式不同，但都从 monorepo 根目录用 `yarn <platform>:*` 脚本驱动。
+三端的构建/部署方式不同，通常从 monorepo 根目录用
+`yarn <platform>:*` 脚本驱动。
+
+> 当前部分 clean/deploy 脚本包含 `rm`、`grep`、`awk` 等 Unix 命令。
+> Windows PowerShell 环境建议使用 Git Bash/WSL，或直接运行对应的
+> Gradle、Vite、Tizen CLI 命令。
 
 | 平台 | Runtime | Bundler | 产物 | 部署目标 |
 |------|---------|---------|------|----------|
@@ -83,30 +88,71 @@ TIZEN_PROFILE=myprofile yarn tizen:package
 3. 用 profile 签名打包；
 4. **解压校验 `author-signature.xml` 确实存在**——未签名直接报错退出，避免给出"假装成功"的未签名包。
 
-产物：`apps/tizen/dist/Kepler TV.wgt`（文件名含空格，CLI 使用时记得加引号）。
+产物位于 `apps/tizen/dist/`。具体 `.wgt` 文件名由 Tizen CLI 和
+`config.xml` 决定，命令行使用时建议始终加引号。
 
-### 3.4 在 Windows 模拟器上安装
+### 3.4 Tizen Studio Run Project
 
-把 `Kepler TV.wgt` 拷到 Windows，`C:\tizen-studio\tools` 与 `tools\ide\bin` 加入 PATH：
+Tizen Studio 不会编译 shared TypeScript/TSX。每次修改 shared UI、焦点、
+Tizen PAL 或 Web 组件后，先执行：
+
+```bash
+yarn tizen:build
+```
+
+再在 Tizen Studio 中执行 `Run Project` / `Run As → Tizen Web Application`。
+
+运行链路：
+
+```text
+apps/tizen/index.html
+  → packaged runtime 自动跳转
+apps/tizen/dist/index.html
+  → ./assets/index.js 和图片资源
+```
+
+root `index.html` 只用于 Vite dev 与 Tizen Studio 包装，不是正式应用页面。
+不要直接让它加载 `dist/assets/index.js`，否则图片相对路径会指向错误目录。
+
+如果 Run 后仍是旧 UI：
+
+1. 确认 `dist/assets/index.js` 的时间已经更新；
+2. 从模拟器卸载旧应用；
+3. 重新执行 Run Project。
+
+### 3.5 在 Windows 模拟器上安装
+
+把签名 `.wgt` 拷到 Windows，`C:\tizen-studio\tools` 与
+`tools\ide\bin` 加入 PATH：
 
 ```bat
 sdb devices                                  :: 启动 TV 模拟器后查看 serial
-tizen install -n "Kepler TV.wgt" -t <serial>
+tizen install -n "<package-name>.wgt" -t <serial>
 ```
 
-### 3.5 其它打包方式（不改环境变量）
+### 3.6 其它打包方式（不改环境变量）
 
 - **绝对路径**：`C:\tizen-studio\tools\ide\bin\tizen.bat package -t wgt -s skyworth -- dist`
 - **Tizen Studio GUI**：Certificate Manager 选证书 → 项目右键 `Build Signed Package`，或 `Run As → Tizen Web Application`（自动签名+装+启动）。
 
-### 3.6 安装到真机
+### 3.7 安装到真机
 
 Mac/Windows 都可（`sdb` 是纯网络客户端）：电视端开「开发者模式」并填入 Host PC IP，然后：
 
 ```bash
 sdb connect <电视IP>:26101
 sdb devices
-tizen install -n "Kepler TV.wgt" -t <serial>
+tizen install -n "<package-name>.wgt" -t <serial>
 ```
 
 > 上真实商用 Samsung TV 需对应的 distributor 权限证书（partner/public），与本地模拟器用的默认 distributor 不同。
+
+### 3.8 Tizen 发布前检查
+
+- 执行 `yarn typecheck:tizen`。
+- 执行 `yarn tizen:build`。
+- 在模拟器验证四方向、确认键、返回键和初始焦点。
+- 检查所有图片均从 `dist/assets/` 正确加载。
+- 验证 HTTPS、CORS、证书和真实 API。
+- 使用签名后的 `.wgt` 安装测试。
+- 至少在一台目标年份的 Samsung 真机上回归。

@@ -1,7 +1,7 @@
 import React from 'react';
-import {View, Text, Platform, StyleSheet} from 'react-native';
-import {scaleFontSize, scaleWidth, scaleHeight} from '../../utils/scaling';
-import {HeaderLogo} from './HeaderLogo';
+import { View, Text, Platform, StyleSheet } from 'react-native';
+import { scaleFontSize, scaleWidth, scaleHeight } from '../../utils/scaling';
+import { HeaderLogo } from './HeaderLogo';
 
 const platformName = Platform.select({
   ios: 'iOS',
@@ -14,7 +14,12 @@ export const Header = () => {
   return (
     <View style={styles.container}>
       <View style={styles.textContainer}>
-        <Text style={styles.headerText}>Hello {platformName},</Text>
+        <Text
+          style={styles.headerText}
+          numberOfLines={1}
+          adjustsFontSizeToFit>
+          Hello {platformName},
+        </Text>
         <Text style={styles.subHeaderText}>
           Select one of the options to start your development journey 🚀
         </Text>
@@ -32,11 +37,14 @@ const styles = StyleSheet.create({
   },
   textContainer: {
     flex: 1,
+    minWidth: 0,
   },
   headerText: {
     color: '#FFFFFF',
     fontSize: scaleFontSize(160),
+    lineHeight: scaleFontSize(140),
     fontWeight: 'bold',
+    flexShrink: 1,
   },
   subHeaderText: {
     color: '#FFFFFF',

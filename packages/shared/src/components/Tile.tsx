@@ -8,18 +8,22 @@ import {
   View,
 } from 'react-native';
 import {scaleFontSize, scaleWidth} from '../utils/scaling';
+import {useFocusable} from '../focus';
 
 export interface TileProps {
   id: string;
   label: string;
   icon: ImageSourcePropType;
-  isFocused: boolean;
+  isFocused?: boolean;
   onFocus: (id: string) => void;
   onBlur: () => void;
   onPress?: (id: string) => void;
   testID?: string;
   accessibilityLabel?: string;
   hasTVPreferredFocus?: boolean;
+  focusRow?: number;
+  focusCol?: number;
+  focusZone?: string;
 }
 
 export const Tile = memo(
@@ -27,27 +31,39 @@ export const Tile = memo(
     id,
     label,
     icon,
-    isFocused,
     onFocus,
     onBlur,
     onPress,
     testID,
     accessibilityLabel,
     hasTVPreferredFocus,
+    focusRow = 0,
+    focusCol = 0,
+    focusZone = 'home-tiles',
   }: TileProps) => {
-    const handleFocus = useCallback(() => onFocus(id), [id, onFocus]);
+    const {ref, isFocused: isManagerFocused, focusableProps} = useFocusable(id, {
+      row: focusRow,
+      col: focusCol,
+      zone: focusZone,
+      preferred: hasTVPreferredFocus,
+      onFocus,
+    });
+    const visuallyFocused = isManagerFocused;
     const handlePress = useCallback(() => onPress?.(id), [id, onPress]);
+    const webFocusableProps = {tabIndex: 0};
 
     return (
       <TouchableOpacity
-        style={[styles.tile, isFocused ? styles.focused : styles.default]}
-        onFocus={handleFocus}
+        ref={ref}
+        style={[styles.tile, visuallyFocused ? styles.focused : styles.default]}
+        onFocus={focusableProps.onFocus}
         onBlur={onBlur}
         onPress={handlePress}
         testID={testID}
         accessibilityLabel={accessibilityLabel}
         accessibilityRole="button"
         hasTVPreferredFocus={hasTVPreferredFocus}
+        {...(webFocusableProps as object)}
         activeOpacity={0.8}>
         <View style={styles.topHalf}>
           <Image source={icon} style={styles.icon} accessible={false} />

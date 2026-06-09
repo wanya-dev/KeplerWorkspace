@@ -22,5 +22,29 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    <!-- tizen-studio-fallback:start -->
+    <script>
+      (function () {
+        function openBuiltApp() {
+          window.location.replace('./dist/index.html');
+        }
+
+        var isPackagedRuntime =
+          window.location.protocol === 'file:' ||
+          window.location.protocol === 'widget:';
+
+        if (isPackagedRuntime) {
+          openBuiltApp();
+          return;
+        }
+
+        window.setTimeout(function () {
+          if (!window.__KEPLER_APP_BOOTED__) {
+            openBuiltApp();
+          }
+        }, 1500);
+      })();
+    </script>
+    <!-- tizen-studio-fallback:end -->
   </body>
 </html>

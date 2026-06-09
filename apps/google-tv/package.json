@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "start": "react-native start",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
     "android": "react-native run-android",
     "build:debug": "react-native run-android --variant=debug --no-packager",
     "build:release": "cd android && ./gradlew assembleRelease",

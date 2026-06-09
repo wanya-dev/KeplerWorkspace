@@ -1,4 +1,9 @@
-import type {PlatformServices, ISystemService, IMediaPlayer, IVoiceService} from '@workspace/shared';
+import type {
+  PlatformServices,
+  ISystemService,
+  IMediaPlayer,
+  IVoiceService,
+} from '@workspace/shared/src/pal';
 
 // ─── Tizen System Service Implementation ────────────────────────────────────
 // Uses Tizen Web API when available, falls back to Web API for browser testing.

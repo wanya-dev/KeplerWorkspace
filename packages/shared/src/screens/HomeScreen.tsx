@@ -1,4 +1,4 @@
-import React, {useState, useCallback} from 'react';
+import React, {useCallback} from 'react';
 import {StyleSheet, Text, ImageBackground, View} from 'react-native';
 import {Tile} from '../components/Tile';
 import {tiles} from '../data/tiles';
@@ -7,21 +7,18 @@ import {IconReactNativeAnimated} from '../components/IconReactNativeAnimated/Ico
 import {Header} from '../components/Header/Header';
 import {usePal} from '../pal';
 import {backgroundImage} from '../assets/images';
+import {FocusProvider, useFocusManager} from '../focus';
 
 import {scaleFontSize, scaleWidth, scaleHeight} from '../utils/scaling';
 
-export const HomeScreen = () => {
+const HomeScreenContent = () => {
   const {system} = usePal();
-  const [focusedTileId, setFocusedTileId] = useState<string>('home');
+  const {focusedId} = useFocusManager();
+  const focusedTileId = focusedId ?? 'home';
 
   const focusedTile = tiles.find(t => t.id === focusedTileId);
 
-  // Only onFocus drives state — 'home' tile has hasTVPreferredFocus,
-  // so when it gains focus, state naturally resets to 'home'.
-  // No onBlur reset needed since tiles are the only focusable elements.
-  const handleTileFocus = useCallback((tileId: string) => {
-    setFocusedTileId(tileId);
-  }, []);
+  const handleTileFocus = useCallback((_tileId: string) => {}, []);
 
   // No-op: blur doesn't reset state, avoiding the blur/focus race condition
   // that caused a 1-frame Header flash on Android TV.
@@ -68,25 +65,33 @@ export const HomeScreen = () => {
       style={styles.background}>
       <View style={styles.headerArea}>{renderFocusedContent()}</View>
       <View style={styles.tileRowContent}>
-        {tiles.map(tile => (
+        {tiles.map((tile, index) => (
           <Tile
             key={tile.id}
             id={tile.id}
             label={tile.label}
             icon={tile.icon}
-            isFocused={focusedTileId === tile.id}
             onFocus={handleTileFocus}
             onBlur={handleTileBlur}
             onPress={handleTilePress}
             testID={`tile-${tile.id}`}
             accessibilityLabel={tile.accessibilityLabel}
             hasTVPreferredFocus={tile.id === 'home'}
+            focusRow={0}
+            focusCol={index}
+            focusZone="home-tiles"
           />
         ))}
       </View>
     </ImageBackground>
   );
 };
+
+export const HomeScreen = () => (
+  <FocusProvider initialFocusId="home">
+    <HomeScreenContent />
+  </FocusProvider>
+);
 
 
 const styles = StyleSheet.create({

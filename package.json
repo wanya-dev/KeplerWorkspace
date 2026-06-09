@@ -32,6 +32,10 @@
     "tizen:dev": "yarn workspace @workspace/tizen run dev",
     "tizen:build": "yarn workspace @workspace/tizen run build",
     "tizen:package": "yarn workspace @workspace/tizen run package",
+    "typecheck": "yarn typecheck:vega && yarn typecheck:android && yarn typecheck:tizen",
+    "typecheck:vega": "yarn workspace @amazon-devices/keplerproject run typecheck",
+    "typecheck:android": "yarn workspace @workspace/google-tv run typecheck",
+    "typecheck:tizen": "yarn workspace @workspace/tizen run typecheck",
 
     "sim:start": "vega virtual-device start",
     "sim:stop": "vega virtual-device stop",

@@ -2,6 +2,19 @@
     "extends": "@tsconfig/react-native/tsconfig.json",
     "compilerOptions": {
         "jsx": "react-native",
-        "types": ["jest", "@amazon-devices/react-native-kepler"], /* Override "jest", "react-native" from @tsconfig/react-native */
+        "types": ["jest", "@amazon-devices/react-native-kepler"],
+        "baseUrl": ".",
+        "moduleSuffixes": [".native", ".kepler", ""],
+        "paths": {
+            "react": ["./node_modules/@types/react"],
+            "react-native": ["./node_modules/react-native"],
+            "@workspace/shared": ["../../packages/shared"],
+            "@workspace/shared/*": ["../../packages/shared/*"]
+        }
     },
+    "include": ["src", "test", "../../packages/shared"],
+    "exclude": [
+        "../../packages/shared/**/*.web.ts",
+        "../../packages/shared/**/*.web.tsx"
+    ]
 }

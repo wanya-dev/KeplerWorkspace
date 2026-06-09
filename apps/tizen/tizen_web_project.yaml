@@ -1,0 +1,38 @@
+# Project type [web_app, test_runner]
+project_type: web_app
+
+# Tizen TV profile and API version.
+profile: tv
+api_version: "6.0"
+
+build_type: Debug
+output_name: KeplerTV
+output_path: ""
+opt: false
+signing_profile: ""
+trust_anchor: []
+
+# Keep the Tizen Studio project lean. The root index.html is a small
+# development/Studio wrapper; the actual built app lives in dist/.
+files:
+  - config.xml
+  - index.html
+  - dist/index.html
+  - dist/assets/background.png
+  - dist/assets/debug.png
+  - dist/assets/get-started.png
+  - dist/assets/index.js
+  - dist/assets/learn-more.png
+  - dist/assets/web.png
+
+excludes:
+  - Build/*
+  - Debug/*
+  - Release/*
+  - Test/*
+  - node_modules/*
+  - src/*
+  - scripts/*
+  - "*.wgt"
+
+deps: []
